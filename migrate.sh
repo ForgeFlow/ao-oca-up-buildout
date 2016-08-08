@@ -14,6 +14,8 @@ psql $DATABASE -U odoo<<HEREDOC
 --- Mark some modules for installation
 insert into ir_module_module (name, state) values ('database_cleanup', 'to install');
 insert into ir_module_module (name, state) values ('base_technical_features', 'to install');
+--- Delete an old mail group
+DELETE FROM mail_followers WHERE res_model = 'mail.group' and res_id not in (select id from mail_group);
 HEREDOC
 
 VERSIONS=$(eval echo bin/start_openupgrade*)
