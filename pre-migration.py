@@ -156,5 +156,9 @@ def main():
     delete_mail_catchall_alias(cr)
     update_periods(cr)
     move_normal_moves_from_special_periods(cr)
+
+    # Commit all changes
+    conn.commit()
+
 if __name__ == "__main__":
     main()

@@ -114,5 +114,8 @@ def main():
     deactivate_features(cr)
     reset_all_users_passwords(cr)
 
+    # Commit all changes
+    conn.commit()
+
 if __name__ == "__main__":
     main()
