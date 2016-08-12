@@ -94,7 +94,7 @@ def reset_all_users_passwords(cr):
 
 def main():
     # Define our connection string
-    conn_string = """host='localhost' dbname=%s user=%s
+    conn_string = """dbname=%s user=%s
     password=%s""" % (db_name, db_user, db_password)
 
     # print the connection string we will use to connect
