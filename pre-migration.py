@@ -136,7 +136,7 @@ def move_normal_moves_from_special_periods(cr):
 
 def main():
     # Define our connection string
-    conn_string = """host='localhost' dbname=%s user=%s
+    conn_string = """dbname=%s user=%s
     password=%s""" % (db_name, db_user, db_password)
 
     # print the connection string we will use to connect
@@ -156,6 +156,5 @@ def main():
     delete_mail_catchall_alias(cr)
     update_periods(cr)
     move_normal_moves_from_special_periods(cr)
-
 if __name__ == "__main__":
     main()
