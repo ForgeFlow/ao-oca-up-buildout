@@ -161,7 +161,7 @@ def update_invoice_uom(cr):
         WHERE poc2.id != poc1.id
     """)
     for so_name, sol_name, poc1_name, ai_name, ail_name, poc2_name in \
-            cr.fechall():
+            cr.fetchall():
         print("""Sales order %s, line %s has UoM category %s. Invoice
         %s, line %s has UoM category %s""" % (so_name, sol_name, poc1_name,
                                               ai_name, ail_name, poc2_name))
