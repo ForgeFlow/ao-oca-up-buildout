@@ -168,7 +168,7 @@ def update_invoice_uom(cr):
     cr.execute("""
         UPDATE account_invoice_line
         SET (uos_id) = (
-        SELECT poc1.id
+        SELECT puom1.id
         FROM sale_order_line_invoice_rel as solinvl
         INNER JOIN sale_order_line as sol
         ON sol.id = solinvl.order_line_id
