@@ -135,9 +135,8 @@ def move_normal_moves_from_special_periods(cr):
 
 
 def update_invoice_uom(cr):
-    print("""The following sales order lines have different uom category
-    than in the corresponding invoiced lines. Updating the invoice lines to
-    have the same uom as the order lines.""")
+    print("""Updating the invoice lines to
+    have the same uom as the order lines, if the category differs.""")
 
     cr.execute("""
         WITH Q AS (
