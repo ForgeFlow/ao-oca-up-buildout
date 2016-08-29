@@ -140,55 +140,29 @@ def update_invoice_uom(cr):
     have the same uom as the order lines.""")
 
     cr.execute("""
-        SELECT so.name, sol.name, poc1.name, ai.name, ail.name, poc2.name
-        FROM sale_order_line_invoice_rel as solinvl
-        INNER JOIN sale_order_line as sol
-        ON sol.id = solinvl.order_line_id
-        INNER JOIN sale_order as so
-        ON so.id = sol.order_id
-        INNER JOIN account_invoice_line as ail
-        ON ail.id = solinvl.invoice_id
-        INNER JOIN account_invoice as ai
-        ON ai.id = ail.invoice_id
-        INNER JOIN product_uom puom1
-        ON puom1.id = sol.product_uom
-        INNER JOIN product_uom_categ poc1
-        ON poc1.id = puom1.category_id
-        INNER JOIN product_uom puom2
-        ON puom2.id = ail.uos_id
-        INNER JOIN product_uom_categ poc2
-        ON poc2.id = puom2.category_id
-        WHERE poc2.id != poc1.id
-    """)
-    for so_name, sol_name, poc1_name, ai_name, ail_name, poc2_name in \
-            cr.fetchall():
-        print("""Sales order %s, line %s has UoM category %s. Invoice
-        %s, line %s has UoM category %s""" % (so_name, sol_name, poc1_name,
-                                              ai_name, ail_name, poc2_name))
-    cr.execute("""
+        WITH Q AS (
+                SELECT ail.id, sol.product_uom as uos_id
+                FROM sale_order_line_invoice_rel as solinvl
+                INNER JOIN sale_order_line as sol
+                ON sol.id = solinvl.order_line_id
+                INNER JOIN account_invoice_line as ail
+                ON ail.id = solinvl.invoice_id
+                INNER JOIN product_uom puom1
+                ON puom1.id = sol.product_uom
+                INNER JOIN product_uom_categ poc1
+                ON poc1.id = puom1.category_id
+                INNER JOIN product_uom puom2
+                ON puom2.id = ail.uos_id
+                INNER JOIN product_uom_categ poc2
+                ON poc2.id = puom2.category_id
+                WHERE poc2.id != poc1.id
+        )
         UPDATE account_invoice_line
-        SET (uos_id) = (
-        SELECT puom1.id
-        FROM sale_order_line_invoice_rel as solinvl
-        INNER JOIN sale_order_line as sol
-        ON sol.id = solinvl.order_line_id
-        INNER JOIN sale_order as so
-        ON so.id = sol.order_id
-        INNER JOIN account_invoice_line as ail
-        ON ail.id = solinvl.invoice_id
-        INNER JOIN account_invoice as ai
-        ON ai.id = ail.invoice_id
-        INNER JOIN product_uom puom1
-        ON puom1.id = sol.product_uom
-        INNER JOIN product_uom_categ poc1
-        ON poc1.id = puom1.category_id
-        INNER JOIN product_uom puom2
-        ON puom2.id = ail.uos_id
-        INNER JOIN product_uom_categ poc2
-        ON poc2.id = puom2.category_id
-        WHERE poc2.id != poc1.id
-        AND account_invoice_line.id = ail.id)
+        SET uos_id = Q.uos_id
+        FROM Q
+        WHERE account_invoice_line.id = Q.id
     """)
+    print ("Rows affected: %s" % cr.rowcount)
 
 
 def main():
