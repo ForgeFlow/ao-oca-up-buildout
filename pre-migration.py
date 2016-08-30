@@ -121,17 +121,18 @@ def move_normal_moves_from_special_periods(cr):
         move_ids.append(move_id)
         print("""Move %s will be moved to another period""" % (move_name,))
 
-    print("""Updating all previously selected moves to a new non special
-    period within the move date.""")
-    cr.execute("""
-        UPDATE account_move as am
-        SET period_id = ap.id
-        FROM account_period AS ap
-        WHERE am.id in %s
-        AND ap.date_start <= am.date
-        AND ap.date_stop >= am.date
-        AND ap.special = False
-    """, (tuple(move_ids),))
+    if move_ids:
+        print("""Updating all previously selected moves to a new non special
+        period within the move date.""")
+        cr.execute("""
+            UPDATE account_move as am
+            SET period_id = ap.id
+            FROM account_period AS ap
+            WHERE am.id in %s
+            AND ap.date_start <= am.date
+            AND ap.date_stop >= am.date
+            AND ap.special = False
+        """, (tuple(move_ids),))
 
 
 def update_invoice_uom(cr):
@@ -164,6 +165,14 @@ def update_invoice_uom(cr):
     print ("Rows affected: %s" % cr.rowcount)
 
 
+def uninstall_modules(cr):
+    print("""Uninstalling modules: crm_phone, base_phone """)
+
+    cr.execute("""UPDATE ir_module_module SET state='uninstalled'
+    WHERE name in ('crm_phone', 'base_phone')""")
+    print ("Rows affected: %s" % cr.rowcount)
+
+
 def main():
     # Define our connection string
     conn_string = """dbname=%s user=%s
@@ -187,6 +196,7 @@ def main():
     update_periods(cr)
     move_normal_moves_from_special_periods(cr)
     update_invoice_uom(cr)
+    uninstall_modules(cr)
 
     # Commit all changes
     conn.commit()
