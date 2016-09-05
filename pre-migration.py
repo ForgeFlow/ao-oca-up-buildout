@@ -103,11 +103,15 @@ def update_periods(cr):
     print("""Update Period 12/2013 to set is as a non-opening/closing
     period.""")
 
-    cr.execute("""
-        UPDATE account_period
-        SET special = False
-        WHERE name='12/2013'
-    """)
+    try:
+        cr.execute("""
+            UPDATE account_period
+            SET special = False
+            WHERE name='12/2013'
+        """)
+    except psycopg2.InternalError:
+        # If query fails ignore
+        return
 
 
 def move_normal_moves_from_special_periods(cr):
