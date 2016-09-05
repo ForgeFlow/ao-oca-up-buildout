@@ -121,16 +121,20 @@ def move_normal_moves_from_special_periods(cr):
 
     print("""Selecting all the account moves that are in special periods,
     but not in a centralized journal.""")
-    cr.execute("""
-        SELECT am.id, am.name
-        FROM account_move AS am
-        INNER JOIN account_period AS ap
-        ON ap.id = am.period_id
-        INNER JOIN account_journal AS aj
-        ON aj.id = am.journal_id
-        WHERE ap.special=True
-        AND aj.code NOT IN ('FY', 'OC11')
-    """)
+    try:
+        cr.execute("""
+            SELECT am.id, am.name
+            FROM account_move AS am
+            INNER JOIN account_period AS ap
+            ON ap.id = am.period_id
+            INNER JOIN account_journal AS aj
+            ON aj.id = am.journal_id
+            WHERE ap.special=True
+            AND aj.code NOT IN ('FY', 'OC11')
+        """)
+    except psycopg2.InternalError:
+        # If query fails ignore
+        return
     move_ids = []
     for move_id, move_name in cr.fetchall():
         move_ids.append(move_id)
@@ -139,44 +143,52 @@ def move_normal_moves_from_special_periods(cr):
     if move_ids:
         print("""Updating all previously selected moves to a new non special
         period within the move date.""")
-        cr.execute("""
-            UPDATE account_move as am
-            SET period_id = ap.id
-            FROM account_period AS ap
-            WHERE am.id in %s
-            AND ap.date_start <= am.date
-            AND ap.date_stop >= am.date
-            AND ap.special = False
-        """, (tuple(move_ids),))
+        try:
+            cr.execute("""
+                UPDATE account_move as am
+                SET period_id = ap.id
+                FROM account_period AS ap
+                WHERE am.id in %s
+                AND ap.date_start <= am.date
+                AND ap.date_stop >= am.date
+                AND ap.special = False
+            """, (tuple(move_ids),))
+        except psycopg2.InternalError:
+            # If query fails ignore
+            return
 
 
 def update_sale_invoice_uom(cr):
     print("""Updating the UoM invoice lines to
     have the same uom as the sales order lines, if the category differs.""")
 
-    cr.execute("""
-        WITH Q AS (
-                SELECT ail.id, sol.product_uom as uos_id
-                FROM sale_order_line_invoice_rel as solinvl
-                INNER JOIN sale_order_line as sol
-                ON sol.id = solinvl.order_line_id
-                INNER JOIN account_invoice_line as ail
-                ON ail.id = solinvl.invoice_id
-                INNER JOIN product_uom puom1
-                ON puom1.id = sol.product_uom
-                INNER JOIN product_uom_categ poc1
-                ON poc1.id = puom1.category_id
-                INNER JOIN product_uom puom2
-                ON puom2.id = ail.uos_id
-                INNER JOIN product_uom_categ poc2
-                ON poc2.id = puom2.category_id
-                WHERE poc2.id != poc1.id
-        )
-        UPDATE account_invoice_line
-        SET uos_id = Q.uos_id
-        FROM Q
-        WHERE account_invoice_line.id = Q.id
-    """)
+    try:
+        cr.execute("""
+            WITH Q AS (
+                    SELECT ail.id, sol.product_uom as uos_id
+                    FROM sale_order_line_invoice_rel as solinvl
+                    INNER JOIN sale_order_line as sol
+                    ON sol.id = solinvl.order_line_id
+                    INNER JOIN account_invoice_line as ail
+                    ON ail.id = solinvl.invoice_id
+                    INNER JOIN product_uom puom1
+                    ON puom1.id = sol.product_uom
+                    INNER JOIN product_uom_categ poc1
+                    ON poc1.id = puom1.category_id
+                    INNER JOIN product_uom puom2
+                    ON puom2.id = ail.uos_id
+                    INNER JOIN product_uom_categ poc2
+                    ON poc2.id = puom2.category_id
+                    WHERE poc2.id != poc1.id
+            )
+            UPDATE account_invoice_line
+            SET uos_id = Q.uos_id
+            FROM Q
+            WHERE account_invoice_line.id = Q.id
+        """)
+    except psycopg2.InternalError:
+        # If query fails ignore
+        return
     print ("Rows affected: %s" % cr.rowcount)
 
 
@@ -184,27 +196,31 @@ def update_purchase_stock_uom(cr):
     print("""Updating the UoM in stock moves to
     have the same uom as the purchase order lines, if the category differs.""")
 
-    cr.execute("""
-        WITH Q AS (
-            SELECT sm.id, pol.product_uom as uom_id
-            FROM stock_move as sm
-            INNER JOIN purchase_order_line as pol
-            ON pol.id = sm.purchase_line_id
-            INNER JOIN product_uom puom1
-            ON puom1.id = pol.product_uom
-            INNER JOIN product_uom_categ poc1
-            ON poc1.id = puom1.category_id
-            INNER JOIN product_uom puom2
-            ON puom2.id = sm.product_uom
-            INNER JOIN product_uom_categ poc2
-            ON poc2.id = puom2.category_id
-            WHERE poc2.id != poc1.id
-        )
-        UPDATE stock_move
-        SET product_uom = Q.uom_id
-        FROM Q
-        WHERE stock_move.id = Q.id
-    """)
+    try:
+        cr.execute("""
+            WITH Q AS (
+                SELECT sm.id, pol.product_uom as uom_id
+                FROM stock_move as sm
+                INNER JOIN purchase_order_line as pol
+                ON pol.id = sm.purchase_line_id
+                INNER JOIN product_uom puom1
+                ON puom1.id = pol.product_uom
+                INNER JOIN product_uom_categ poc1
+                ON poc1.id = puom1.category_id
+                INNER JOIN product_uom puom2
+                ON puom2.id = sm.product_uom
+                INNER JOIN product_uom_categ poc2
+                ON poc2.id = puom2.category_id
+                WHERE poc2.id != poc1.id
+            )
+            UPDATE stock_move
+            SET product_uom = Q.uom_id
+            FROM Q
+            WHERE stock_move.id = Q.id
+        """)
+    except psycopg2.InternalError:
+        # If query fails ignore
+        return
     print ("Rows affected: %s" % cr.rowcount)
 
 
@@ -212,29 +228,33 @@ def update_purchase_invoice_uom(cr):
     print("""Updating the UoM in invoice lines to
     have the same uom as the purchase order lines, if the category differs.""")
 
-    cr.execute("""
-        WITH Q AS (
-                SELECT ail.id, pol.product_uom as uom_id
-                FROM purchase_order_line_invoice_rel as polinvl
-                INNER JOIN purchase_order_line as pol
-                ON pol.id = polinvl.order_line_id
-                INNER JOIN account_invoice_line as ail
-                ON ail.id = polinvl.invoice_id
-                INNER JOIN product_uom puom1
-                ON puom1.id = pol.product_uom
-                INNER JOIN product_uom_categ poc1
-                ON poc1.id = puom1.category_id
-                INNER JOIN product_uom puom2
-                ON puom2.id = ail.uos_id
-                INNER JOIN product_uom_categ poc2
-                ON poc2.id = puom2.category_id
-                WHERE poc2.id != poc1.id
-        )
-        UPDATE account_invoice_line
-        SET uos_id = Q.uom_id
-        FROM Q
-        WHERE account_invoice_line.id = Q.id
-    """)
+    try:
+        cr.execute("""
+            WITH Q AS (
+                    SELECT ail.id, pol.product_uom as uom_id
+                    FROM purchase_order_line_invoice_rel as polinvl
+                    INNER JOIN purchase_order_line as pol
+                    ON pol.id = polinvl.order_line_id
+                    INNER JOIN account_invoice_line as ail
+                    ON ail.id = polinvl.invoice_id
+                    INNER JOIN product_uom puom1
+                    ON puom1.id = pol.product_uom
+                    INNER JOIN product_uom_categ poc1
+                    ON poc1.id = puom1.category_id
+                    INNER JOIN product_uom puom2
+                    ON puom2.id = ail.uos_id
+                    INNER JOIN product_uom_categ poc2
+                    ON poc2.id = puom2.category_id
+                    WHERE poc2.id != poc1.id
+            )
+            UPDATE account_invoice_line
+            SET uos_id = Q.uom_id
+            FROM Q
+            WHERE account_invoice_line.id = Q.id
+        """)
+    except psycopg2.InternalError:
+        # If query fails ignore
+        return
     print ("Rows affected: %s" % cr.rowcount)
 
 
