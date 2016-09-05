@@ -46,7 +46,7 @@ for a in options[:]:
         break
 
 
-def disable_inherit_unported_modules(cr):
+def disable_inherit_unported_modules(conn, cr):
     print("""defuse inheriting views originating from
     not yet ported modules""")
     cr.execute("""
@@ -60,9 +60,10 @@ def disable_inherit_unported_modules(cr):
         AND inherit_id IS NOT null
         AND ir_module_module.state <> 'installed'
     """)
+    conn.commit()
 
 
-def set_not_ported_modules_to_installed(cr):
+def set_not_ported_modules_to_installed(conn, cr):
     print("""set not yet ported modules to installed
     (otherwise, updating a module to work on becomes tricky)""")
 
@@ -71,17 +72,19 @@ def set_not_ported_modules_to_installed(cr):
         SET state='installed'
         WHERE state IN ('to install', 'to upgrade')
     """)
+    conn.commit()
 
 
-def deactivate_features(cr):
+def deactivate_features(conn, cr):
     print("""deactivate cronjobx, mailservers, fetchmail""")
 
     cr.execute("""DELTE FROM ir_mail_server""")
     cr.execute("""UPDATE fetchmail_server SET active=False""")
     cr.execute("""UPDATE ir_cron SET active=False""")
+    conn.commit()
 
 
-def reset_all_users_passwords(cr):
+def reset_all_users_passwords(conn, cr):
     print("""reset all user passwords""")
     cr.execute("""
         UPDATE res_users
@@ -90,6 +93,7 @@ def reset_all_users_passwords(cr):
             FROM res_users
             WHERE login='admin')
         """)
+    conn.commit()
 
 
 def main():
@@ -109,13 +113,11 @@ def main():
     cr = conn.cursor()
     print "Connected!\n"
 
-    disable_inherit_unported_modules(cr)
-    set_not_ported_modules_to_installed(cr)
-    deactivate_features(cr)
-    reset_all_users_passwords(cr)
+    disable_inherit_unported_modules(conn, cr)
+    set_not_ported_modules_to_installed(conn, cr)
+    deactivate_features(conn, cr)
+    reset_all_users_passwords(conn, cr)
 
-    # Commit all changes
-    conn.commit()
 
 if __name__ == "__main__":
     main()

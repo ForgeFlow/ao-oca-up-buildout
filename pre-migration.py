@@ -46,7 +46,7 @@ for a in options[:]:
         break
 
 
-def pre_install_modules(cr):
+def pre_install_modules(conn, cr):
     cr.execute("""
         SELECT id
         FROM ir_module_module
@@ -57,7 +57,7 @@ def pre_install_modules(cr):
         INSERT INTO ir_module_module (name, state)
         VALUES ('database_cleanup', 'to install')
     """)
-
+    
     cr.execute("""
         SELECT id
         FROM ir_module_module
@@ -70,7 +70,7 @@ def pre_install_modules(cr):
     """)
 
 
-def delete_old_mail_group(cr):
+def delete_old_mail_group(conn, cr):
     try:
         cr.execute("""
             DELETE FROM mail_followers
@@ -82,9 +82,10 @@ def delete_old_mail_group(cr):
         # If query fails it is because the table 'mail_group' is no longer
         # defined.
         return
+    conn.commit()
 
 
-def delete_mail_catchall_alias(cr):
+def delete_mail_catchall_alias(conn, cr):
     """Delete mail.catchall.alias parameter, because it fails
     when module  mail is installed"""
 
@@ -97,9 +98,10 @@ def delete_mail_catchall_alias(cr):
     except psycopg2.InternalError:
         # If query fails ignore
         return
+    conn.commit()
 
 
-def update_periods(cr):
+def update_periods(conn, cr):
     print("""Update Period 12/2013 to set is as a non-opening/closing
     period.""")
 
@@ -112,9 +114,10 @@ def update_periods(cr):
     except psycopg2.InternalError:
         # If query fails ignore
         return
+    conn.commit()
 
 
-def move_normal_moves_from_special_periods(cr):
+def move_normal_moves_from_special_periods(conn, cr):
     """The account migration script will delete all moves that are in the
     special periods. We need to remove any moves that are not created as
     opening balances for the opening period, so that they are not deleted."""
@@ -135,6 +138,8 @@ def move_normal_moves_from_special_periods(cr):
     except psycopg2.InternalError:
         # If query fails ignore
         return
+    conn.commit()
+
     move_ids = []
     for move_id, move_name in cr.fetchall():
         move_ids.append(move_id)
@@ -156,9 +161,10 @@ def move_normal_moves_from_special_periods(cr):
         except psycopg2.InternalError:
             # If query fails ignore
             return
+        conn.commit()
 
 
-def update_sale_invoice_uom(cr):
+def update_sale_invoice_uom(conn, cr):
     print("""Updating the UoM invoice lines to
     have the same uom as the sales order lines, if the category differs.""")
 
@@ -189,10 +195,11 @@ def update_sale_invoice_uom(cr):
     except psycopg2.InternalError:
         # If query fails ignore
         return
+    conn.commit()
     print ("Rows affected: %s" % cr.rowcount)
 
 
-def update_purchase_stock_uom(cr):
+def update_purchase_stock_uom(conn, cr):
     print("""Updating the UoM in stock moves to
     have the same uom as the purchase order lines, if the category differs.""")
 
@@ -221,10 +228,11 @@ def update_purchase_stock_uom(cr):
     except psycopg2.InternalError:
         # If query fails ignore
         return
+    conn.commit()
     print ("Rows affected: %s" % cr.rowcount)
 
 
-def update_purchase_invoice_uom(cr):
+def update_purchase_invoice_uom(conn, cr):
     print("""Updating the UoM in invoice lines to
     have the same uom as the purchase order lines, if the category differs.""")
 
@@ -255,6 +263,7 @@ def update_purchase_invoice_uom(cr):
     except psycopg2.InternalError:
         # If query fails ignore
         return
+    conn.commit()
     print ("Rows affected: %s" % cr.rowcount)
 
 
@@ -275,17 +284,15 @@ def main():
     cr = conn.cursor()
     print "Connected!\n"
 
-    pre_install_modules(cr)
-    delete_old_mail_group(cr)
-    delete_mail_catchall_alias(cr)
-    update_periods(cr)
-    move_normal_moves_from_special_periods(cr)
-    update_sale_invoice_uom(cr)
-    update_purchase_stock_uom(cr)
-    update_purchase_invoice_uom(cr)
-
-    # Commit all changes
-    conn.commit()
+    pre_install_modules(conn, cr)
+    delete_old_mail_group(conn, cr)
+    delete_mail_catchall_alias(conn, cr)
+    update_periods(conn, cr)
+    move_normal_moves_from_special_periods(conn, cr)
+    update_sale_invoice_uom(conn, cr)
+    update_purchase_stock_uom(conn, cr)
+    update_purchase_invoice_uom(conn, cr)
+    
 
 if __name__ == "__main__":
     main()
