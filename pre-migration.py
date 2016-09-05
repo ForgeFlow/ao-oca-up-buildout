@@ -87,10 +87,16 @@ def delete_old_mail_group(cr):
 def delete_mail_catchall_alias(cr):
     """Delete mail.catchall.alias parameter, because it fails
     when module  mail is installed"""
-    cr.execute("""
+
+    try:
+        cr.execute("""
         DELETE FROM ir_config_parameter
         WHERE key = 'mail.catchall.alias'
     """)
+
+    except psycopg2.InternalError:
+        # If query fails ignore
+        return
 
 
 def update_periods(cr):
