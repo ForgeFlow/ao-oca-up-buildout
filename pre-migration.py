@@ -199,6 +199,41 @@ def update_sale_invoice_uom(conn, cr):
     print ("Rows affected: %s" % cr.rowcount)
 
 
+def update_sale_stock_uom(conn, cr):
+    print("""Updating the UoM in stock moves to
+    have the same uom as the sales order lines, if the category differs.""")
+
+    try:
+        cr.execute("""
+            WITH Q AS (
+                SELECT sm.id, sol.product_uom as uom_id
+                FROM stock_move as sm
+                INNER JOIN procurement_order as pr
+                ON pr.id = sm.procurement_id
+                INNER JOIN sale_order_line as sol
+                ON pr.sale_line_id = sol.id
+                INNER JOIN product_uom puom1
+                ON puom1.id = sol.product_uom
+                INNER JOIN product_uom_categ poc1
+                ON poc1.id = puom1.category_id
+                INNER JOIN product_uom puom2
+                ON puom2.id = sm.product_uom
+                INNER JOIN product_uom_categ poc2
+                ON poc2.id = puom2.category_id
+                WHERE poc2.id != poc1.id
+            )
+            UPDATE stock_move
+            SET product_uom = Q.uom_id
+            FROM Q
+            WHERE stock_move.id = Q.id
+        """)
+    except psycopg2.InternalError:
+        # If query fails ignore
+        return
+    conn.commit()
+    print ("Rows affected: %s" % cr.rowcount)
+
+
 def update_purchase_stock_uom(conn, cr):
     print("""Updating the UoM in stock moves to
     have the same uom as the purchase order lines, if the category differs.""")
@@ -290,6 +325,7 @@ def main():
     update_periods(conn, cr)
     move_normal_moves_from_special_periods(conn, cr)
     update_sale_invoice_uom(conn, cr)
+    update_sale_stock_uom(conn, cr)
     update_purchase_stock_uom(conn, cr)
     update_purchase_invoice_uom(conn, cr)
     
