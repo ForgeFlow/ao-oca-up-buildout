@@ -135,9 +135,9 @@ def move_normal_moves_from_special_periods(cr):
         """, (tuple(move_ids),))
 
 
-def update_invoice_uom(cr):
-    print("""Updating the invoice lines to
-    have the same uom as the order lines, if the category differs.""")
+def update_sale_invoice_uom(cr):
+    print("""Updating the UoM invoice lines to
+    have the same uom as the sales order lines, if the category differs.""")
 
     cr.execute("""
         WITH Q AS (
@@ -165,11 +165,61 @@ def update_invoice_uom(cr):
     print ("Rows affected: %s" % cr.rowcount)
 
 
-def uninstall_modules(cr):
-    print("""Uninstalling modules: crm_phone, base_phone """)
+def update_purchase_stock_uom(cr):
+    print("""Updating the UoM in stock moves to
+    have the same uom as the purchase order lines, if the category differs.""")
 
-    cr.execute("""UPDATE ir_module_module SET state='uninstalled'
-    WHERE name in ('crm_phone', 'base_phone')""")
+    cr.execute("""
+        WITH Q AS (
+            SELECT sm.id, pol.product_uom as uom_id
+            FROM stock_move as sm
+            INNER JOIN purchase_order_line as pol
+            ON pol.id = sm.purchase_line_id
+            INNER JOIN product_uom puom1
+            ON puom1.id = pol.product_uom
+            INNER JOIN product_uom_categ poc1
+            ON poc1.id = puom1.category_id
+            INNER JOIN product_uom puom2
+            ON puom2.id = sm.product_uom
+            INNER JOIN product_uom_categ poc2
+            ON poc2.id = puom2.category_id
+            WHERE poc2.id != poc1.id
+        )
+        UPDATE stock_move
+        SET product_uom = Q.uom_id
+        FROM Q
+        WHERE stock_move.id = Q.id
+    """)
+    print ("Rows affected: %s" % cr.rowcount)
+
+
+def update_purchase_invoice_uom(cr):
+    print("""Updating the UoM in invoice lines to
+    have the same uom as the purchase order lines, if the category differs.""")
+
+    cr.execute("""
+        WITH Q AS (
+                SELECT ail.id, pol.product_uom as uom_id
+                FROM purchase_order_line_invoice_rel as polinvl
+                INNER JOIN purchase_order_line as pol
+                ON pol.id = polinvl.order_line_id
+                INNER JOIN account_invoice_line as ail
+                ON ail.id = polinvl.invoice_id
+                INNER JOIN product_uom puom1
+                ON puom1.id = pol.product_uom
+                INNER JOIN product_uom_categ poc1
+                ON poc1.id = puom1.category_id
+                INNER JOIN product_uom puom2
+                ON puom2.id = ail.uos_id
+                INNER JOIN product_uom_categ poc2
+                ON poc2.id = puom2.category_id
+                WHERE poc2.id != poc1.id
+        )
+        UPDATE account_invoice_line
+        SET uos_id = Q.uom_id
+        FROM Q
+        WHERE account_invoice_line.id = Q.id
+    """)
     print ("Rows affected: %s" % cr.rowcount)
 
 
@@ -195,8 +245,9 @@ def main():
     delete_mail_catchall_alias(cr)
     update_periods(cr)
     move_normal_moves_from_special_periods(cr)
-    update_invoice_uom(cr)
-    uninstall_modules(cr)
+    update_sale_invoice_uom(cr)
+    update_purchase_stock_uom(cr)
+    update_purchase_invoice_uom(cr)
 
     # Commit all changes
     conn.commit()
