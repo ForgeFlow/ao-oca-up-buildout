@@ -78,7 +78,7 @@ def set_not_ported_modules_to_installed(conn, cr):
 def deactivate_features(conn, cr):
     print("""deactivate cronjobx, mailservers, fetchmail""")
 
-    cr.execute("""DELTE FROM ir_mail_server""")
+    cr.execute("""DELETE FROM ir_mail_server""")
     cr.execute("""UPDATE fetchmail_server SET active=False""")
     cr.execute("""UPDATE ir_cron SET active=False""")
     conn.commit()
