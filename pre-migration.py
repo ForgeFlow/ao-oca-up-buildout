@@ -71,12 +71,17 @@ def pre_install_modules(cr):
 
 
 def delete_old_mail_group(cr):
-    cr.execute("""
-        DELETE FROM mail_followers
-        WHERE res_model = 'mail.group'
-        AND res_id NOT IN (select id from
-        mail_group)
-    """)
+    try:
+        cr.execute("""
+            DELETE FROM mail_followers
+            WHERE res_model = 'mail.group'
+            AND res_id NOT IN (select id from
+            mail_group)
+        """)
+    except psycopg2.ProgrammingError:
+        # If query fails it is because the table 'mail_group' is no longer
+        # defined.
+        return
 
 
 def delete_mail_catchall_alias(cr):
