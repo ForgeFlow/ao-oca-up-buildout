@@ -96,6 +96,18 @@ def reset_all_users_passwords(conn, cr):
     conn.commit()
 
 
+def remove_account_analytic_analysis(conn, cr):
+    print("""Get rid of message: Could not get content for
+    /account_analytic_analysis/static/css/analytic.css defined in bundle
+    'web.assets_backend'
+    """)
+    cr.execute("""
+        DELETE FROM ir_ui_view v
+        WHERE name = 'account_analytic_analysis assets'
+    """)
+    conn.commit()
+
+
 def main():
     # Define our connection string
     conn_string = """dbname=%s user=%s
@@ -117,6 +129,7 @@ def main():
     set_not_ported_modules_to_installed(conn, cr)
     deactivate_features(conn, cr)
     reset_all_users_passwords(conn, cr)
+    remove_account_analytic_analysis(conn, cr)
 
 
 if __name__ == "__main__":
