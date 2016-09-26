@@ -302,6 +302,23 @@ def update_purchase_invoice_uom(conn, cr):
     print ("Rows affected: %s" % cr.rowcount)
 
 
+def delete_account_analytic_analysis_backend_view(conn, cr):
+    print("""Deleting the assets backend from account_analytic_analysis""")
+    try:
+        cr.execute("""
+            DELETE
+            FROM
+            ir_ui_view
+            where
+            name = 'account_analytic_analysis assets'
+        """)
+    except psycopg2.InternalError:
+        # If query fails ignore
+        return
+    conn.commit()
+    print ("Rows affected: %s" % cr.rowcount)
+
+
 def main():
     # Define our connection string
     conn_string = """dbname=%s user=%s
@@ -328,6 +345,7 @@ def main():
     update_sale_stock_uom(conn, cr)
     update_purchase_stock_uom(conn, cr)
     update_purchase_invoice_uom(conn, cr)
+    delete_account_analytic_analysis_backend_view(conn, cr)
     
 
 if __name__ == "__main__":
