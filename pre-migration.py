@@ -319,6 +319,38 @@ def delete_account_analytic_analysis_backend_view(conn, cr):
     print ("Rows affected: %s" % cr.rowcount)
 
 
+def update_account_tax(conn, cr):
+    print("""Updating the only account.tax record associated to python code,
+    field python_applicable """)
+    try:
+        cr.execute("""
+            UPDATE account_tax
+            SET python_applicable = 'result = True'
+            WHERE
+            id = 33
+        """)
+    except psycopg2.InternalError:
+        # If query fails ignore
+        return
+    conn.commit()
+    print ("Rows affected: %s" % cr.rowcount)
+
+    print("""Updating the only account.tax record associated to python code,
+    field python_compute""")
+    try:
+        cr.execute("""
+            UPDATE account_tax
+            SET python_compute = 'result = price_unit'
+            WHERE
+            id = 33
+        """)
+    except psycopg2.InternalError:
+        # If query fails ignore
+        return
+    conn.commit()
+    print ("Rows affected: %s" % cr.rowcount)
+
+
 def main():
     # Define our connection string
     conn_string = """dbname=%s user=%s
@@ -346,7 +378,7 @@ def main():
     update_purchase_stock_uom(conn, cr)
     update_purchase_invoice_uom(conn, cr)
     delete_account_analytic_analysis_backend_view(conn, cr)
-    
+    update_account_tax(conn, cr)
 
 if __name__ == "__main__":
     main()
