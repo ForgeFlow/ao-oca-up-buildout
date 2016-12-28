@@ -351,6 +351,29 @@ def update_account_tax(conn, cr):
     print ("Rows affected: %s" % cr.rowcount)
 
 
+def update_sale_order_delivery_carrier(conn, cr):
+    print("""Updating the sales orders with inconsistent delivery carrier""")
+
+    cr.execute("""
+        UPDATE sale_order
+        SET carrier_id = Null
+        WHERE carrier_id NOT IN (SELECT carrier_id FROM delivery_grid)
+    """)
+    conn.commit()
+    print ("Rows affected: %s" % cr.rowcount)
+
+
+def update_stock_picking_delivery_carrier(conn, cr):
+    print("""Updating stock pickings wuth inconsistent delivery carrier""")
+    cr.execute("""
+        UPDATE stock_picking
+        SET carrier_id = Null
+        WHERE carrier_id NOT IN (SELECT carrier_id FROM delivery_grid)
+    """)
+    conn.commit()
+    print ("Rows affected: %s" % cr.rowcount)
+
+
 def main():
     # Define our connection string
     conn_string = """dbname=%s user=%s
@@ -379,6 +402,7 @@ def main():
     update_purchase_invoice_uom(conn, cr)
     delete_account_analytic_analysis_backend_view(conn, cr)
     update_account_tax(conn, cr)
+    update_sale_order_delivery_carrier(conn, cr)
 
 if __name__ == "__main__":
     main()
