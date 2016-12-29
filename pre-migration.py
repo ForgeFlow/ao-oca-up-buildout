@@ -403,6 +403,7 @@ def main():
     delete_account_analytic_analysis_backend_view(conn, cr)
     update_account_tax(conn, cr)
     update_sale_order_delivery_carrier(conn, cr)
+    update_stock_picking_delivery_carrier(conn, cr)
 
 if __name__ == "__main__":
     main()
