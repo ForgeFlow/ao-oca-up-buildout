@@ -329,8 +329,8 @@ def update_account_tax(conn, cr):
             WHERE
             id = 33
         """)
-    except psycopg2.InternalError:
-        # If query fails ignore
+    except psycopg2.InternalError as e:
+        print e.message
         return
     conn.commit()
     print ("Rows affected: %s" % cr.rowcount)
@@ -344,8 +344,8 @@ def update_account_tax(conn, cr):
             WHERE
             id = 33
         """)
-    except psycopg2.InternalError:
-        # If query fails ignore
+    except psycopg2.InternalError as e:
+        print e.message
         return
     conn.commit()
     print ("Rows affected: %s" % cr.rowcount)
