@@ -202,7 +202,7 @@ def update_sale_invoice_uom(conn, cr):
             FROM Q
             WHERE account_invoice_line.id = Q.id
         """)
-    except psycopg2.InternalError as e:
+    except Exception as e:
         print e.message
         conn.rollback()
         return
@@ -238,7 +238,7 @@ def update_sale_stock_uom(conn, cr):
             FROM Q
             WHERE stock_move.id = Q.id
         """)
-    except psycopg2.InternalError as e:
+    except Exception as e:
         print e.message
         conn.rollback()
         return
@@ -272,7 +272,7 @@ def update_purchase_stock_uom(conn, cr):
             FROM Q
             WHERE stock_move.id = Q.id
         """)
-    except psycopg2.InternalError as e:
+    except Exception as e:
         print e.message
         conn.rollback()
         return
