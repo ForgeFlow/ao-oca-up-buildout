@@ -354,22 +354,32 @@ def update_account_tax(conn, cr):
 def update_sale_order_delivery_carrier(conn, cr):
     print("""Updating the sales orders with inconsistent delivery carrier""")
 
-    cr.execute("""
-        UPDATE sale_order
-        SET carrier_id = Null
-        WHERE carrier_id NOT IN (SELECT carrier_id FROM delivery_grid)
-    """)
+    try:
+        cr.execute("""
+            UPDATE sale_order
+            SET carrier_id = Null
+            WHERE carrier_id NOT IN (SELECT carrier_id FROM delivery_grid)
+        """)
+    except psycopg2.InternalError as e:
+        # If query fails ignore
+        print e.message
+        return
     conn.commit()
     print ("Rows affected: %s" % cr.rowcount)
 
 
 def update_stock_picking_delivery_carrier(conn, cr):
     print("""Updating stock pickings wuth inconsistent delivery carrier""")
-    cr.execute("""
-        UPDATE stock_picking
-        SET carrier_id = Null
-        WHERE carrier_id NOT IN (SELECT carrier_id FROM delivery_grid)
-    """)
+    try:
+        cr.execute("""
+            UPDATE stock_picking
+            SET carrier_id = Null
+            WHERE carrier_id NOT IN (SELECT carrier_id FROM delivery_grid)
+        """)
+    except psycopg2.InternalError as e:
+        # If query fails ignore
+        print e.message
+        return
     conn.commit()
     print ("Rows affected: %s" % cr.rowcount)
 
