@@ -73,11 +73,17 @@ def pre_install_modules(conn, cr):
 def delete_old_mail_group(conn, cr):
     try:
         cr.execute("""
-            DELETE FROM mail_followers
-            WHERE res_model = 'mail.group'
-            AND res_id NOT IN (select id from
-            mail_group)
-        """)
+            SELECT count(*)
+            FROM pg_class
+            WHERE relname='mail_group'
+            AND relkind='r'""")
+        if not cr.fetchone():
+            cr.execute("""
+                DELETE FROM mail_followers
+                WHERE res_model = 'mail.group'
+                AND res_id NOT IN (select id from
+                mail_group)
+            """)
     except psycopg2.ProgrammingError as e:
         print e.message
         return
