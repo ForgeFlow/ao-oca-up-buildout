@@ -341,8 +341,6 @@ def update_account_tax(conn, cr):
         cr.execute("""
             UPDATE account_tax
             SET python_applicable = 'result = True'
-            WHERE
-            id = 33
         """)
     except Exception as e:
         print e.message
