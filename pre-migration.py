@@ -86,6 +86,7 @@ def delete_old_mail_group(conn, cr):
             """)
     except psycopg2.ProgrammingError as e:
         print e.message
+        conn.rollback()
         return
     conn.commit()
 
@@ -102,6 +103,7 @@ def delete_mail_catchall_alias(conn, cr):
 
     except psycopg2.InternalError as e:
         print e.message
+        conn.rollback()
         return
     conn.commit()
 
@@ -118,6 +120,7 @@ def update_periods(conn, cr):
         """)
     except psycopg2.InternalError as e:
         print e.message
+        conn.rollback()
         return
     conn.commit()
 
@@ -142,6 +145,7 @@ def move_normal_moves_from_special_periods(conn, cr):
         """)
     except psycopg2.InternalError as e:
         print e.message
+        conn.rollback()
         return
     conn.commit()
 
@@ -165,6 +169,7 @@ def move_normal_moves_from_special_periods(conn, cr):
             """, (tuple(move_ids),))
         except psycopg2.InternalError as e:
             print e.message
+            conn.rollback()
             return
         conn.commit()
 
@@ -199,6 +204,7 @@ def update_sale_invoice_uom(conn, cr):
         """)
     except psycopg2.InternalError as e:
         print e.message
+        conn.rollback()
         return
     conn.commit()
     print ("Rows affected: %s" % cr.rowcount)
@@ -234,6 +240,7 @@ def update_sale_stock_uom(conn, cr):
         """)
     except psycopg2.InternalError as e:
         print e.message
+        conn.rollback()
         return
     conn.commit()
     print ("Rows affected: %s" % cr.rowcount)
@@ -267,6 +274,7 @@ def update_purchase_stock_uom(conn, cr):
         """)
     except psycopg2.InternalError as e:
         print e.message
+        conn.rollback()
         return
     conn.commit()
     print ("Rows affected: %s" % cr.rowcount)
@@ -302,6 +310,7 @@ def update_purchase_invoice_uom(conn, cr):
         """)
     except psycopg2.InternalError as e:
         print e.message
+        conn.rollback()
         return
     conn.commit()
     print ("Rows affected: %s" % cr.rowcount)
@@ -319,6 +328,7 @@ def delete_account_analytic_analysis_backend_view(conn, cr):
         """)
     except psycopg2.InternalError as e:
         print e.message
+        conn.rollback()
         return
     conn.commit()
     print ("Rows affected: %s" % cr.rowcount)
@@ -336,6 +346,7 @@ def update_account_tax(conn, cr):
         """)
     except psycopg2.InternalError as e:
         print e.message
+        conn.rollback()
         return
     conn.commit()
     print ("Rows affected: %s" % cr.rowcount)
@@ -351,6 +362,7 @@ def update_account_tax(conn, cr):
         """)
     except psycopg2.InternalError as e:
         print e.message
+        conn.rollback()
         return
     conn.commit()
     print ("Rows affected: %s" % cr.rowcount)
@@ -368,6 +380,7 @@ def update_sale_order_delivery_carrier(conn, cr):
     except psycopg2.InternalError as e:
         # If query fails ignore
         print e.message
+        conn.rollback()
         return
     conn.commit()
     print ("Rows affected: %s" % cr.rowcount)
@@ -384,6 +397,7 @@ def update_stock_picking_delivery_carrier(conn, cr):
     except psycopg2.InternalError as e:
         # If query fails ignore
         print e.message
+        conn.rollback()
         return
     conn.commit()
     print ("Rows affected: %s" % cr.rowcount)
