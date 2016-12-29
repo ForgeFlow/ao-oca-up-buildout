@@ -84,7 +84,7 @@ def delete_old_mail_group(conn, cr):
                 AND res_id NOT IN (select id from
                 mail_group)
             """)
-    except psycopg2.ProgrammingError as e:
+    except Exception as e:
         print e.message
         conn.rollback()
         return
@@ -101,7 +101,7 @@ def delete_mail_catchall_alias(conn, cr):
         WHERE key = 'mail.catchall.alias'
     """)
 
-    except psycopg2.InternalError as e:
+    except Exception as e:
         print e.message
         conn.rollback()
         return
@@ -118,7 +118,7 @@ def update_periods(conn, cr):
             SET special = False
             WHERE name='12/2013'
         """)
-    except psycopg2.InternalError as e:
+    except Exception as e:
         print e.message
         conn.rollback()
         return
@@ -143,7 +143,7 @@ def move_normal_moves_from_special_periods(conn, cr):
             WHERE ap.special=True
             AND aj.code NOT IN ('FY', 'OC11')
         """)
-    except psycopg2.InternalError as e:
+    except Exception as e:
         print e.message
         conn.rollback()
         return
@@ -167,7 +167,7 @@ def move_normal_moves_from_special_periods(conn, cr):
                 AND ap.date_stop >= am.date
                 AND ap.special = False
             """, (tuple(move_ids),))
-        except psycopg2.InternalError as e:
+        except Exception as e:
             print e.message
             conn.rollback()
             return
@@ -308,7 +308,7 @@ def update_purchase_invoice_uom(conn, cr):
             FROM Q
             WHERE account_invoice_line.id = Q.id
         """)
-    except psycopg2.InternalError as e:
+    except Exception as e:
         print e.message
         conn.rollback()
         return
@@ -326,7 +326,7 @@ def delete_account_analytic_analysis_backend_view(conn, cr):
             where
             name = 'account_analytic_analysis assets'
         """)
-    except psycopg2.InternalError as e:
+    except Exception as e:
         print e.message
         conn.rollback()
         return
@@ -344,7 +344,7 @@ def update_account_tax(conn, cr):
             WHERE
             id = 33
         """)
-    except psycopg2.InternalError as e:
+    except Exception as e:
         print e.message
         conn.rollback()
         return
@@ -360,7 +360,7 @@ def update_account_tax(conn, cr):
             WHERE
             id = 33
         """)
-    except psycopg2.InternalError as e:
+    except Exception as e:
         print e.message
         conn.rollback()
         return
@@ -377,7 +377,7 @@ def update_sale_order_delivery_carrier(conn, cr):
             SET carrier_id = Null
             WHERE carrier_id NOT IN (SELECT carrier_id FROM delivery_grid)
         """)
-    except psycopg2.InternalError as e:
+    except Exception as e:
         # If query fails ignore
         print e.message
         conn.rollback()
@@ -394,7 +394,7 @@ def update_stock_picking_delivery_carrier(conn, cr):
             SET carrier_id = Null
             WHERE carrier_id NOT IN (SELECT carrier_id FROM delivery_grid)
         """)
-    except psycopg2.InternalError as e:
+    except Exception as e:
         # If query fails ignore
         print e.message
         conn.rollback()
