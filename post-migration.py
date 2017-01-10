@@ -51,14 +51,17 @@ def disable_inherit_unported_modules(conn, cr):
     not yet ported modules""")
     cr.execute("""
         UPDATE ir_ui_view
-        SET arch='<data/>'
-        FROM ir_model_data
-        JOIN ir_module_module
-        ON ir_model_data.module=ir_module_module.name
-        WHERE ir_model_data.model='ir.ui.view'
-        AND res_id=ir_ui_view.id
-        AND inherit_id IS NOT null
-        AND ir_module_module.state <> 'installed'
+        SET arch='<data/>',
+        arch_db='<data/>'
+        WHERE id in (
+            SELECT iuv.id
+            FROM ir_ui_view as iuv
+            INNER JOIN ir_model_data as imd
+            ON iuv.id = imd.res_id
+            INNER JOIN ir_module_module as imm
+            ON imd.module = imm.name
+            WHERE imm.state <> 'installed'
+            AND imd.model = 'ir.ui.view')
     """)
     conn.commit()
 
@@ -108,6 +111,109 @@ def remove_account_analytic_analysis(conn, cr):
     conn.commit()
 
 
+def delete_views(conn, cr):
+    print("""Get rid of an old analytic account view'""")
+
+    # analytic account view
+    cr.execute("""
+        DELETE
+        from ir_ui_view
+        where inherit_id = 1940
+    """)
+    cr.execute("""
+        DELETE
+        from ir_ui_view
+        where id = 1940
+    """)
+
+    # Stock move
+    cr.execute("""
+        DELETE
+        from ir_ui_view
+        where inherit_id = 2028
+    """)
+
+    cr.execute("""
+        DELETE
+        from ir_ui_view
+        where id = 2028
+    """)
+
+    # View `account.voucher.receipt.form`
+    cr.execute("""
+        DELETE
+        from ir_ui_view
+        where inherit_id = 606
+    """)
+
+    cr.execute("""
+        DELETE
+        from ir_ui_view
+        where id = 606
+    """)
+
+    # View `account.move.line tree_account_reconciliation`
+    cr.execute("""
+        DELETE
+        from ir_ui_view
+        where inherit_id = 1937
+    """)
+
+    cr.execute("""
+        DELETE
+        from ir_ui_view
+        where id = 1937
+    """)
+
+    # View `account.move.form.inherit`
+    # [view_id: 1555, xml_id: account_analytic_plans.view_move_form_inherit,
+    # model: account.move, parent_id: 360]
+    cr.execute("""
+        DELETE
+        from ir_ui_view
+        where inherit_id = 1555
+    """)
+
+    cr.execute("""
+        DELETE
+        from ir_ui_view
+        where id = 1555
+    """)
+
+    # Error context:
+    # View `account.analytic.line.tree`
+    # [view_id: 455, xml_id: n/a, model: account.analytic.line, parent_id: n/a]
+    cr.execute("""
+        DELETE
+        from ir_ui_view
+        where inherit_id = 455
+    """)
+
+    cr.execute("""
+        DELETE
+        from ir_ui_view
+        where id = 455
+    """)
+
+    # Error context:
+    # View `account.analytic.line.form`
+    # [view_id: 454, xml_id: n / a, model: account.analytic.line, parent_id:
+    # n / a]
+    cr.execute("""
+        DELETE
+        from ir_ui_view
+        where inherit_id = 454
+    """)
+
+    cr.execute("""
+        DELETE
+        from ir_ui_view
+        where id = 454
+    """)
+
+    conn.commit()
+
+
 def main():
     # Define our connection string
     conn_string = """dbname=%s user=%s
@@ -130,6 +236,7 @@ def main():
     deactivate_features(conn, cr)
     reset_all_users_passwords(conn, cr)
     remove_account_analytic_analysis(conn, cr)
+    delete_views(conn, cr)
 
 
 if __name__ == "__main__":
