@@ -385,13 +385,37 @@ def update_sale_order_delivery_carrier(conn, cr):
 
 
 def update_stock_picking_delivery_carrier(conn, cr):
-    print("""Updating stock pickings wuth inconsistent delivery carrier""")
+    print("""Updating stock pickings with inconsistent delivery carrier""")
     try:
         cr.execute("""
             UPDATE stock_picking
             SET carrier_id = Null
             WHERE carrier_id NOT IN (SELECT carrier_id FROM delivery_grid)
         """)
+    except Exception as e:
+        # If query fails ignore
+        print e.message
+        conn.rollback()
+        return
+    conn.commit()
+    print ("Rows affected: %s" % cr.rowcount)
+
+
+def update_pos_order(conn, cr):
+    print("""Updating pos.order records that have null session_id""")
+    cr.execute("""SELECT id FROM pos_session LIMIT 1""")
+    try:
+        session_id = cr.fetchone()[0]
+    except Exception as e:
+        print e.message
+        conn.rollback()
+        return
+    try:
+        cr.execute("""
+            UPDATE pos_order
+            SET session_id = %s
+            WHERE session_id IS NULL
+        """ % session_id)
     except Exception as e:
         # If query fails ignore
         print e.message
@@ -431,6 +455,7 @@ def main():
     update_account_tax(conn, cr)
     update_sale_order_delivery_carrier(conn, cr)
     update_stock_picking_delivery_carrier(conn, cr)
+    update_pos_order(conn, cr)
 
 if __name__ == "__main__":
     main()
