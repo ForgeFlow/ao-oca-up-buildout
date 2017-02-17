@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/ao-oca-up-buildout.iml" filepath="$PROJECT_DIR$/.idea/ao-oca-up-buildout.iml" />
+      <module fileurl="file://$USER_HOME$/odoo-addons/9.0/OCA/PR/knowledge-pr/.idea/knowledge-pr.iml" filepath="$USER_HOME$/odoo-addons/9.0/OCA/PR/knowledge-pr/.idea/knowledge-pr.iml" />
+    </modules>
+  </component>
+</project>

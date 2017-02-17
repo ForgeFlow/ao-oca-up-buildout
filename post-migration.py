@@ -234,7 +234,7 @@ def main():
     disable_inherit_unported_modules(conn, cr)
     set_not_ported_modules_to_installed(conn, cr)
     deactivate_features(conn, cr)
-    reset_all_users_passwords(conn, cr)
+#    reset_all_users_passwords(conn, cr)
     remove_account_analytic_analysis(conn, cr)
     delete_views(conn, cr)
 
