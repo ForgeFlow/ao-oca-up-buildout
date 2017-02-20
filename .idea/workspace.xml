@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ee628bba-ddda-4232-afd4-adf89fcdd6e1" name="Default" comment="[IMP] pre-migration">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/buildout.cfg" afterPath="$PROJECT_DIR$/buildout.cfg" />
-    </list>
+    <list default="true" id="ee628bba-ddda-4232-afd4-adf89fcdd6e1" name="Default" comment="[IMP] pre-migration" />
     <ignored path="ao-oca-up-buildout.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
