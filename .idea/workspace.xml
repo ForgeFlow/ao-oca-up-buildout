@@ -46,8 +46,8 @@
       <file leaf-file-name="buildout.cfg" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/buildout.cfg">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="444">
-              <caret line="56" column="85" lean-forward="false" selection-start-line="56" selection-start-column="85" selection-end-line="56" selection-end-column="85" />
+            <state relative-caret-position="892">
+              <caret line="74" column="0" lean-forward="true" selection-start-line="74" selection-start-column="0" selection-end-line="74" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -69,6 +69,7 @@
       <find>teleph</find>
       <find>serp</find>
       <find>account-financial-tools</find>
+      <find>git https://github.com/Eficent/purchase-workflow parts/purchase-workflow9 9.0-purchase_location_by_line</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -105,8 +106,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -920,8 +921,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/buildout.cfg">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="444">
-          <caret line="56" column="85" lean-forward="false" selection-start-line="56" selection-start-column="85" selection-end-line="56" selection-end-column="85" />
+        <state relative-caret-position="892">
+          <caret line="74" column="0" lean-forward="true" selection-start-line="74" selection-start-column="0" selection-end-line="74" selection-end-column="0" />
           <folding />
         </state>
       </provider>
