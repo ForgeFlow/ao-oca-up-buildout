@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ee628bba-ddda-4232-afd4-adf89fcdd6e1" name="Default" comment="[IMP] pre-migration">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/buildout.cfg" afterPath="$PROJECT_DIR$/buildout.cfg" />
     </list>
     <ignored path="ao-oca-up-buildout.iws" />
@@ -45,8 +46,8 @@
       <file leaf-file-name="buildout.cfg" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/buildout.cfg">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="640">
-              <caret line="44" column="0" lean-forward="true" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
+            <state relative-caret-position="444">
+              <caret line="56" column="85" lean-forward="false" selection-start-line="56" selection-start-column="85" selection-end-line="56" selection-end-column="85" />
               <folding />
             </state>
           </provider>
@@ -64,6 +65,10 @@
       <find>fetchone</find>
       <find>remove_account_analytic_analysis</find>
       <find>payments_widget</find>
+      <find>9.0</find>
+      <find>teleph</find>
+      <find>serp</find>
+      <find>account-financial-tools</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -101,6 +106,7 @@
     </navigator>
     <panes>
       <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -115,7 +121,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -915,8 +920,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/buildout.cfg">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="640">
-          <caret line="44" column="0" lean-forward="true" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
+        <state relative-caret-position="444">
+          <caret line="56" column="85" lean-forward="false" selection-start-line="56" selection-start-column="85" selection-end-line="56" selection-end-column="85" />
           <folding />
         </state>
       </provider>
