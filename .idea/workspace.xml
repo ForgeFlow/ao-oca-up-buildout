@@ -4,6 +4,7 @@
     <list default="true" id="ee628bba-ddda-4232-afd4-adf89fcdd6e1" name="Default" comment="[IMP] pre-migration">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/buildout.cfg" afterPath="$PROJECT_DIR$/buildout.cfg" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/post-migration.py" afterPath="$PROJECT_DIR$/post-migration.py" />
     </list>
     <ignored path="ao-oca-up-buildout.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -23,11 +24,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="pre-migration.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pre-migration.py">
+      <file leaf-file-name="buildout.cfg" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/buildout.cfg">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="7326">
-              <caret line="408" column="22" lean-forward="false" selection-start-line="408" selection-start-column="22" selection-end-line="408" selection-end-column="22" />
+            <state relative-caret-position="131">
+              <caret line="30" column="65" lean-forward="false" selection-start-line="30" selection-start-column="65" selection-end-line="30" selection-end-column="65" />
               <folding />
             </state>
           </provider>
@@ -36,18 +37,20 @@
       <file leaf-file-name="post-migration.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/post-migration.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4230">
-              <caret line="236" column="1" lean-forward="false" selection-start-line="236" selection-start-column="1" selection-end-line="236" selection-end-column="1" />
-              <folding />
+            <state relative-caret-position="268">
+              <caret line="136" column="8" lean-forward="true" selection-start-line="136" selection-start-column="8" selection-end-line="136" selection-end-column="8" />
+              <folding>
+                <element signature="e#18#33#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="buildout.cfg" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/buildout.cfg">
+      <file leaf-file-name="pre-migration.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pre-migration.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="892">
-              <caret line="74" column="0" lean-forward="true" selection-start-line="74" selection-start-column="0" selection-end-line="74" selection-end-column="0" />
+            <state relative-caret-position="3484">
+              <caret line="408" column="22" lean-forward="false" selection-start-line="408" selection-start-column="22" selection-end-line="408" selection-end-column="22" />
               <folding />
             </state>
           </provider>
@@ -70,6 +73,9 @@
       <find>serp</find>
       <find>account-financial-tools</find>
       <find>git https://github.com/Eficent/purchase-workflow parts/purchase-workflow9 9.0-purchase_location_by_line</find>
+      <find>9.0-product-mig-pricelist_partnerinfo</find>
+      <find>update_product_category</find>
+      <find>9.0-base-partner-type</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -79,8 +85,8 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/pre-migration.py" />
-        <option value="$PROJECT_DIR$/post-migration.py" />
         <option value="$PROJECT_DIR$/buildout.cfg" />
+        <option value="$PROJECT_DIR$/post-migration.py" />
       </list>
     </option>
   </component>
@@ -106,7 +112,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
@@ -122,10 +127,11 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$USER_HOME$/odoo-addons/8.0" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -903,26 +909,28 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/post-migration.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4230">
-          <caret line="236" column="1" lean-forward="false" selection-start-line="236" selection-start-column="1" selection-end-line="236" selection-end-column="1" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pre-migration.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7326">
+        <state relative-caret-position="3484">
           <caret line="408" column="22" lean-forward="false" selection-start-line="408" selection-start-column="22" selection-end-line="408" selection-end-column="22" />
           <folding />
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/post-migration.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="268">
+          <caret line="136" column="8" lean-forward="true" selection-start-line="136" selection-start-column="8" selection-end-line="136" selection-end-column="8" />
+          <folding>
+            <element signature="e#18#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/buildout.cfg">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="892">
-          <caret line="74" column="0" lean-forward="true" selection-start-line="74" selection-start-column="0" selection-end-line="74" selection-end-column="0" />
+        <state relative-caret-position="131">
+          <caret line="30" column="65" lean-forward="false" selection-start-line="30" selection-start-column="65" selection-end-line="30" selection-end-column="65" />
           <folding />
         </state>
       </provider>

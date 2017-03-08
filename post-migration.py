@@ -111,6 +111,54 @@ def remove_account_analytic_analysis(conn, cr):
     conn.commit()
 
 
+def update_product_category(conn, cr):
+    print("""Pre-create default values for product categories (costing
+    method and inventory valuation)""")
+
+    # Select the field_id
+    cr.execute("""
+    SELECT imf.id
+    FROM ir_model_fields as imf
+    INNER JOIN ir_model as im
+    ON imf.model_id = im.id
+    WHERE im.name = 'Product Category'
+    AND imf.name = 'property_cost_method'
+    """)
+    costing_method_field_id = cr.fetchone()[0] or False
+
+    # Select the field_id
+    cr.execute("""
+    select imf.id
+    from ir_model_fields as imf
+    inner join ir_model as im
+    on imf.model_id = im.id
+    where im.name = 'Product Category'
+    and imf.name = 'property_valuation'
+    """)
+    valuation_field_id = cr.fetchone()[0] or False
+
+    # Select the product categories
+    cr.execute("""
+    SELECT id
+    FROM product_category
+    """)
+
+    for categ_id in cr.fetchall():
+        cr.excute("""
+        INSERT INTO ir_property (value_text,name,create_uid,type,
+        company_id,write_uid,fields_id,res_id,create_date,write_date)
+        VALUES ('real','property_cost_method',1,'selection',1,1,%s,
+        'product.category,%s',now(),now())
+        """ (categ_id, costing_method_field_id))
+
+        cr.excute("""
+        INSERT INTO ir_property (value_text,name,create_uid,type,
+        company_id,write_uid,fields_id,res_id,create_date,write_date)
+        VALUES ('real','property_valuation',1,'selection',1,1,%s,
+        'product.category,%s',now(),now())
+        """ (categ_id, valuation_field_id))
+
+
 def delete_views(conn, cr):
     print("""Get rid of an old analytic account view'""")
 
@@ -236,6 +284,7 @@ def main():
     deactivate_features(conn, cr)
 #    reset_all_users_passwords(conn, cr)
     remove_account_analytic_analysis(conn, cr)
+    update_product_category(conn, cr)
     delete_views(conn, cr)
 
 
