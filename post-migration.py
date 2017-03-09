@@ -143,20 +143,20 @@ def update_product_category(conn, cr):
     FROM product_category
     """)
 
-    for categ_id in cr.fetchall():
-        cr.excute("""
+    for categ_id, in cr.fetchall():
+        cr.execute("""
         INSERT INTO ir_property (value_text,name,create_uid,type,
         company_id,write_uid,fields_id,res_id,create_date,write_date)
         VALUES ('real','property_cost_method',1,'selection',1,1,%s,
         'product.category,%s',now(),now())
-        """ (categ_id, costing_method_field_id))
+        """ % (costing_method_field_id, categ_id))
 
-        cr.excute("""
+        cr.execute("""
         INSERT INTO ir_property (value_text,name,create_uid,type,
         company_id,write_uid,fields_id,res_id,create_date,write_date)
-        VALUES ('real','property_valuation',1,'selection',1,1,%s,
+        VALUES ('real_time','property_valuation',1,'selection',1,1,%s,
         'product.category,%s',now(),now())
-        """ (categ_id, valuation_field_id))
+        """ % (valuation_field_id, categ_id))
 
 
 def delete_views(conn, cr):
