@@ -159,6 +159,59 @@ def update_product_category(conn, cr):
         """ % (valuation_field_id, categ_id))
 
 
+def update_payments_from_vouchers(conn, cr):
+    """Update account.payment rows from corresponding account.voucher rows."""
+    # Use the fact that id of migrated account_payment is id of original
+    # account_voucher.
+    # Do not set: check_number = av.number
+    # new check_number is integer value, av.number was text filled from
+    # sequence.
+    print("""Update payments from vouchers'""")
+    cr.execute(
+        """\
+        UPDATE account_payment ap
+        SET
+            check_number = CAST(av.check_number AS INTEGER)
+        FROM account_voucher av
+        WHERE ap.id = av.id
+        """
+    )
+    conn.commit()
+
+
+def update_subcontracted_service(conn, cr):
+    """Update the subcontracted service"""
+    print("""Update subcontracted service'""")
+
+    # Select the field_id
+    cr.execute("""
+    select imf.id
+    from ir_model_fields as imf
+    inner join ir_model as im
+    on imf.model_id = im.id
+    where im.name = 'Product Template'
+    and imf.name = 'property_subcontracted_service'
+    """)
+
+    subontracted_service_field_id = cr.fetchone()[0] or False
+
+    cr.execute("""
+        SELECT product_tmpl_id
+        FROM product_product
+        WHERE default_code IN ('SR-MN0001', 'SR-MN0002', 'SR-MN0003',
+        'SR-MN0004', 'SR-MN0005', 'SR-MN0006')
+    """)
+    for template_id, in cr.fetchall():
+        cr.execute("""
+        INSERT INTO ir_property (value_integer,name,create_uid,type,
+        company_id,write_uid,fields_id,res_id,create_date,write_date)
+        VALUES (1,'property_subcontracted_service',1,'boolean',1,1,%s,
+        'product.template,%s',now(),now())
+        """ % (subontracted_service_field_id, template_id))
+
+    conn.commit()
+
+
 def delete_views(conn, cr):
     print("""Get rid of an old analytic account view'""")
 
@@ -285,6 +338,8 @@ def main():
 #    reset_all_users_passwords(conn, cr)
     remove_account_analytic_analysis(conn, cr)
     update_product_category(conn, cr)
+    update_payments_from_vouchers(conn, cr)
+    update_subcontracted_service(conn, cr)
     delete_views(conn, cr)
 
 
