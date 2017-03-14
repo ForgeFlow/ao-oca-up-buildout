@@ -174,6 +174,65 @@ def move_normal_moves_from_special_periods(conn, cr):
         conn.commit()
 
 
+def update_move_date_inconsistent_fiscal_year(conn, cr):
+    """Some journal entries have a date that belongs to a year
+    later than the fiscal year of the period. When periods disappear in v9,
+    the balance sheet looks different than in v8 for this reason. We want to
+    change the date of these journal entries so that the date matches with
+    the period indicated."""
+
+    print("""Selecting all the account moves that have a date in a year
+    inconsistent with the year of the period""")
+
+    cr.execute("""
+        SELECT am.id, am.name, am.date, ap.date_stop
+        FROM account_move AS am
+        INNER JOIN account_period AS ap
+        ON ap.id = am.period_id
+        WHERE EXTRACT(YEAR FROM am.date) > EXTRACT(YEAR FROM ap.date_stop)
+    """)
+
+    for am_id, am_name, am_date, ap_date_stop in cr.fetchall():
+        print("""Updating date of move %s from %s to %s""" % (am_name,
+                                                              am_date,
+                                                              ap_date_stop))
+        cr.execute("""
+            UPDATE account_move
+            SET date = %s
+            WHERE id = %s
+        """, (ap_date_stop, am_id))
+        cr.execute("""
+            UPDATE account_move_line
+            SET date = %s
+            WHERE move_id = %s
+        """, (ap_date_stop, am_id))
+        conn.commit()
+
+    cr.execute("""
+        SELECT am.id, am.name, am.date, ap.date_start
+        FROM account_move AS am
+        INNER JOIN account_period AS ap
+        ON ap.id = am.period_id
+        WHERE EXTRACT(YEAR FROM am.date) < EXTRACT(YEAR FROM ap.date_start)
+    """)
+
+    for am_id, am_name, am_date, ap_date_start in cr.fetchall():
+        print("""Updating date of move %s from %s to %s""" % (am_name,
+                                                              am_date,
+                                                              ap_date_start))
+        cr.execute("""
+            UPDATE account_move
+            SET date = %s
+            WHERE id = %s
+        """, (ap_date_start, am_id))
+        cr.execute("""
+            UPDATE account_move_line
+            SET date = %s
+            WHERE move_id = %s
+        """, (ap_date_start, am_id))
+        conn.commit()
+
+
 def update_sale_invoice_uom(conn, cr):
     print("""Updating the UoM invoice lines to
     have the same uom as the sales order lines, if the category differs.""")
@@ -447,6 +506,7 @@ def main():
     delete_mail_catchall_alias(conn, cr)
     update_periods(conn, cr)
     move_normal_moves_from_special_periods(conn, cr)
+    update_move_date_inconsistent_fiscal_year(conn, cr)
     update_sale_invoice_uom(conn, cr)
     update_sale_stock_uom(conn, cr)
     update_purchase_stock_uom(conn, cr)
