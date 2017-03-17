@@ -212,6 +212,29 @@ def update_subcontracted_service(conn, cr):
     conn.commit()
 
 
+def assign_technical_features(conn, cr):
+    """Assign technical features to all users"""
+
+    cr.execute("""
+        select id from res_groups
+        where name = 'Technical Features (w/o debug mode)'
+    """)
+    g_id = cr.fetchone()[0] or False
+
+    try:
+        cr.execute("""
+            INSERT INTO res_groups_users_rel (gid, uid)
+            SELECT %s, ru.id
+            FROM res_users ru
+            WHERE ru.id <> 1;
+        """ % (g_id, ))
+    except Exception as e:
+        print e.message
+        conn.rollback()
+        return
+    conn.commit()
+
+
 def delete_views(conn, cr):
     print("""Get rid of an old analytic account view'""")
 
@@ -340,6 +363,7 @@ def main():
     update_product_category(conn, cr)
     update_payments_from_vouchers(conn, cr)
     update_subcontracted_service(conn, cr)
+    assign_technical_features(conn, cr)
     delete_views(conn, cr)
 
 
