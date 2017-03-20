@@ -145,18 +145,36 @@ def update_product_category(conn, cr):
 
     for categ_id, in cr.fetchall():
         cr.execute("""
-        INSERT INTO ir_property (value_text,name,create_uid,type,
-        company_id,write_uid,fields_id,res_id,create_date,write_date)
-        VALUES ('real','property_cost_method',1,'selection',1,1,%s,
-        'product.category,%s',now(),now())
+        SELECT id
+        FROM ir_property
+        WHERE name = 'property_cost_method'
+        AND value_text = 'real'
+        AND fields_id = %s
+        AND res_id = 'product.category,%s'
         """ % (costing_method_field_id, categ_id))
+        if not cr.fetchone():
+            cr.execute("""
+            INSERT INTO ir_property (value_text,name,create_uid,type,
+            company_id,write_uid,fields_id,res_id,create_date,write_date)
+            VALUES ('real','property_cost_method',1,'selection',1,1,%s,
+            'product.category,%s',now(),now())
+            """ % (costing_method_field_id, categ_id))
 
         cr.execute("""
-        INSERT INTO ir_property (value_text,name,create_uid,type,
-        company_id,write_uid,fields_id,res_id,create_date,write_date)
-        VALUES ('real_time','property_valuation',1,'selection',1,1,%s,
-        'product.category,%s',now(),now())
+        SELECT id
+        FROM ir_property
+        WHERE name = 'property_valuation'
+        AND value_text = 'real_time'
+        AND fields_id = %s
+        AND res_id = 'product.category,%s'
         """ % (valuation_field_id, categ_id))
+        if not cr.fetchone():
+            cr.execute("""
+            INSERT INTO ir_property (value_text,name,create_uid,type,
+            company_id,write_uid,fields_id,res_id,create_date,write_date)
+            VALUES ('real_time','property_valuation',1,'selection',1,1,%s,
+            'product.category,%s',now(),now())
+            """ % (valuation_field_id, categ_id))
 
 
 def update_payments_from_vouchers(conn, cr):
@@ -203,11 +221,21 @@ def update_subcontracted_service(conn, cr):
     """)
     for template_id, in cr.fetchall():
         cr.execute("""
-        INSERT INTO ir_property (value_integer,name,create_uid,type,
-        company_id,write_uid,fields_id,res_id,create_date,write_date)
-        VALUES (1,'property_subcontracted_service',1,'boolean',1,1,%s,
-        'product.template,%s',now(),now())
+        SELECT id
+        FROM ir_property
+        WHERE name = 'property_subcontracted_service'
+        AND value_integer = 1
+        AND type = 'boolean'
+        AND fields_id = %s
+        AND res_id = 'product.template,%s'
         """ % (subontracted_service_field_id, template_id))
+        if not cr.fetchone():
+            cr.execute("""
+            INSERT INTO ir_property (value_integer,name,create_uid,type,
+            company_id,write_uid,fields_id,res_id,create_date,write_date)
+            VALUES (1,'property_subcontracted_service',1,'boolean',1,1,%s,
+            'product.template,%s',now(),now())
+            """ % (subontracted_service_field_id, template_id))
 
     conn.commit()
 
@@ -223,11 +251,18 @@ def assign_technical_features(conn, cr):
 
     try:
         cr.execute("""
-            INSERT INTO res_groups_users_rel (gid, uid)
-            SELECT %s, ru.id
-            FROM res_users ru
-            WHERE ru.id <> 1;
+        SELECT id
+        FROM res_groups_users_rel
+        WHERE gid = %s
+        AND uid <> 1
         """ % (g_id, ))
+        if not cr.fetchone():
+            cr.execute("""
+                INSERT INTO res_groups_users_rel (gid, uid)
+                SELECT %s, ru.id
+                FROM res_users ru
+                WHERE ru.id <> 1;
+            """ % (g_id, ))
     except Exception as e:
         print e.message
         conn.rollback()
