@@ -251,7 +251,7 @@ def assign_technical_features(conn, cr):
 
     try:
         cr.execute("""
-        SELECT id
+        SELECT gid
         FROM res_groups_users_rel
         WHERE gid = %s
         AND uid <> 1
