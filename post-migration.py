@@ -177,6 +177,18 @@ def update_product_category(conn, cr):
             """ % (valuation_field_id, categ_id))
 
 
+def update_product_purchase_method(conn, cr):
+    print("""Services should be billed based on ordered quantities""")
+    cr.execute(
+        """\
+        UPDATE product_template
+        SET purchase_method = 'purchase'
+        WHERE type = 'service'
+        """
+    )
+    conn.commit()
+
+
 def update_payments_from_vouchers(conn, cr):
     """Update account.payment rows from corresponding account.voucher rows."""
     # Use the fact that id of migrated account_payment is id of original
@@ -226,6 +238,7 @@ def update_subcontracted_service(conn, cr):
         WHERE name = 'property_subcontracted_service'
         AND value_integer = 1
         AND type = 'boolean'
+
         AND fields_id = %s
         AND res_id = 'product.template,%s'
         """ % (subontracted_service_field_id, template_id))
@@ -396,6 +409,7 @@ def main():
 #    reset_all_users_passwords(conn, cr)
     remove_account_analytic_analysis(conn, cr)
     update_product_category(conn, cr)
+    update_product_purchase_method(conn, cr)
     update_payments_from_vouchers(conn, cr)
     update_subcontracted_service(conn, cr)
     assign_technical_features(conn, cr)
