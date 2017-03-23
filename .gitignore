@@ -1,0 +1,13 @@
+.idea/ 
+.installed.cfg
+bin/
+build/
+develop-eggs/
+eggs/
+parts/
+python*/
+*.pyc
+*.egg
+*.egg-info
+dist
+.tox
