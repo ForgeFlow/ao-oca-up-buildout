@@ -7,11 +7,11 @@ if [ -z "$DATABASE" ]; then
     exit 1
 fi
 
-python ./pre-migration.py --db_name=$DATABASE --db_user=odoo
+python3 ./pre-migration.py --db_name=$DATABASE --db_user=odoo --db_password=odoo --db_host localhost --db_port=5432
 
 VERSIONS=$(eval echo bin/start_openupgrade*)
 for version in $VERSIONS; do
-    $version --db_user odoo -i ao_profile --update=all --stop-after-init --database=$DATABASE || exit 1
+    $version --db_user odoo --db_password=odoo --update=all --stop-after-init --database=$DATABASE || exit 1
 done
 
-python ./post-migration.py --db_name=$DATABASE --db_user=odoo
+python3 ./post-migration.py --db_name=$DATABASE --db_user=odoo --db_password=odoo --db_host localhost --db_port=5432

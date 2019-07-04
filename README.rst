@@ -1,9 +1,9 @@
-Openupgrade buildout
-====================
+AO OpenUpgrade 12.0 buildout
+============================
 
 This repository contains a buildout. Prepare it by running::
 
-    python bootstrap.py
+    python3 bootstrap.py
 
 and then run it with::
 
