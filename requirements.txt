@@ -66,7 +66,6 @@ numpy==1.15.4
 olefile==0.46
 pandas==0.23.4
 pbr==5.1.1
-pkg-resources==0.0.0
 pstats-print2list==1.1.9
 python-stdnum==1.10
 six==1.10.0
