@@ -81,6 +81,17 @@ def pre_install_modules(conn, cr):
     conn.commit()
 
 
+def clean_deprecated_data(conn, cr):
+    cr.execute("""
+    DELETE FROM ir_model_data
+    WHERE model in ('crm.tracking.campaign', 'crm.tracking.medium',
+        'crm.tracking.source')""")
+    cr.execute("""DROP table IF EXISTS crm_tracking_campaign CASCADE""")
+    cr.execute("""DROP table IF EXISTS crm_tracking_medium CASCADE""")
+    cr.execute("""DROP table IF EXISTS crm_tracking_source CASCADE""")
+    conn.commit()
+
+
 def main():
     # Define our connection string
     conn_string = """dbname=%s user=%s password=%s""" % (
@@ -105,6 +116,7 @@ def main():
     print("Connected!\n")
 
     pre_install_modules(conn, cr)
+    clean_deprecated_data(conn, cr)
 
 
 if __name__ == "__main__":
