@@ -50,7 +50,7 @@ future==0.16.0
 
 # Needed for OpenUpgrade
 odoorpc==0.6.0
--e git+https://github.com/OCA/openupgradelib.git@master#egg=openupgradelib
+-e git+https://github.com/Eficent/openupgradelib.git@master-imp-update_module_names#egg=openupgradelib
 
 # pip packages
 psycogreen==1.0
