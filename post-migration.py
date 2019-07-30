@@ -98,8 +98,11 @@ def set_not_ported_modules_to_installed(conn, cr):
 
 def main():
     # Define our connection string
-    conn_string = """dbname=%s user=%s password=%s""" % (
-        db_name, db_user, db_password)
+    if db_password:
+        conn_string = """dbname=%s user=%s password=%s""" % (
+            db_name, db_user, db_password)
+    else:
+        conn_string = """dbname=%s user=%s""" % (db_name, db_user)
 
     if db_host:
         conn_string += """ host=%s""" % (db_host, )
