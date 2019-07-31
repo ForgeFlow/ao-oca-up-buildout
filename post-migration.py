@@ -2,6 +2,7 @@
 import psycopg2
 import sys
 import getopt
+import json
 
 
 def help_message():
@@ -96,6 +97,68 @@ def set_not_ported_modules_to_installed(conn, cr):
     conn.commit()
 
 
+def partner_statement_config_settings(conn, cr):
+    print("""fill default config settings for partner_statement""")
+
+    # groups
+    cr.execute(
+        """SELECT id FROM ir_model_data WHERE module = 'account'
+        AND model = 'res.groups' AND name = 'group_account_invoice'""")
+    account_invoice_group_id = cr.fetchone()[0]
+    cr.execute(
+        """SELECT id FROM ir_model_data WHERE module = 'partner_statement'
+        AND model = 'res.groups' AND name = 'group_activity_statement'""")
+    activity_statement_group_id = cr.fetchone()[0]
+    cr.execute(
+        """SELECT id FROM ir_model_data WHERE module = 'partner_statement'
+        AND model = 'res.groups' AND name = 'group_outstanding_statement'""")
+    outstanding_statement_group_id = cr.fetchone()[0]
+    cr.execute(
+        """
+        INSERT INTO res_groups_implied_rel (gid, hid)
+        VALUES (%s, %s), (%s, %s)
+    """, (account_invoice_group_id, activity_statement_group_id,
+          account_invoice_group_id, outstanding_statement_group_id),
+    )
+
+    # defaults
+    values = {
+        'aging_type': json.dumps("days", ensure_ascii=False),
+        'show_aging_buckets': json.dumps(True, ensure_ascii=False),
+        'filter_partners_non_due': json.dumps(False, ensure_ascii=False),
+        'filter_negative_balances': json.dumps(False, ensure_ascii=False),
+    }
+    cr.execute(
+        """SELECT idef.id, imf.name
+        FROM ir_default idef
+        JOIN ir_model_fields imf ON idef.field_id = imf.id
+        WHERE imf.model IN ('statement.common.wizard',
+        'activity.statement.wizard', 'outstanding.statement.wizard')""")
+    defaults = [x for x in cr.fetchall()]
+    if defaults:
+        for default in defaults:
+            cr.execute(
+                """UPDATE ir_default
+                SET json_value = %s
+                WHERE field_id = %s""", (values[default[1]], default[0]))
+    else:
+        cr.execute(
+            """SELECT id, name FROM ir_model_fields
+            WHERE model IN ('statement.common.wizard',
+            'activity.statement.wizard', 'outstanding.statement.wizard')
+            AND name IN ('aging_type', 'show_aging_buckets',
+            'filter_partners_non_due', 'filter_negative_balances')"""
+        )
+        fields = [x for x in cr.fetchall()]
+        for field in fields:
+            cr.execute(
+                """
+                INSERT INTO ir_default (field_id, json_value)
+                VALUES (%s, %s)""", (field[0], values[field[1]]),
+            )
+    conn.commit()
+
+
 def main():
     # Define our connection string
     if db_password:
@@ -124,6 +187,7 @@ def main():
 
     disable_inherit_unported_modules(conn, cr)
     set_not_ported_modules_to_installed(conn, cr)
+    partner_statement_config_settings(conn, cr)
 
 
 if __name__ == "__main__":
