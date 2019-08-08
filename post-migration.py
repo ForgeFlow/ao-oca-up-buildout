@@ -102,15 +102,15 @@ def partner_statement_config_settings(conn, cr):
 
     # groups
     cr.execute(
-        """SELECT id FROM ir_model_data WHERE module = 'account'
+        """SELECT res_id FROM ir_model_data WHERE module = 'account'
         AND model = 'res.groups' AND name = 'group_account_invoice'""")
     account_invoice_group_id = cr.fetchone()[0]
     cr.execute(
-        """SELECT id FROM ir_model_data WHERE module = 'partner_statement'
+        """SELECT res_id FROM ir_model_data WHERE module = 'partner_statement'
         AND model = 'res.groups' AND name = 'group_activity_statement'""")
     activity_statement_group_id = cr.fetchone()[0]
     cr.execute(
-        """SELECT id FROM ir_model_data WHERE module = 'partner_statement'
+        """SELECT res_id FROM ir_model_data WHERE module = 'partner_statement'
         AND model = 'res.groups' AND name = 'group_outstanding_statement'""")
     outstanding_statement_group_id = cr.fetchone()[0]
     cr.execute(
