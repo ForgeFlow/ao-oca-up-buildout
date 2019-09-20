@@ -159,6 +159,19 @@ def partner_statement_config_settings(conn, cr):
     conn.commit()
 
 
+def set_chatter_sided_for_all(conn, cr):
+    """Set chatter at the side of the screen for all users as it is the
+    preferred setting.
+    Reference ticket: #22512.
+    """
+    cr.execute("""
+        UPDATE res_users
+        SET chatter_position = 'sided'
+        WHERE chatter_position <> 'sided';
+    """)
+    conn.commit()
+
+
 def main():
     # Define our connection string
     if db_password:
@@ -188,6 +201,7 @@ def main():
     disable_inherit_unported_modules(conn, cr)
     set_not_ported_modules_to_installed(conn, cr)
     partner_statement_config_settings(conn, cr)
+    set_chatter_sided_for_all(conn, cr)
 
 
 if __name__ == "__main__":
