@@ -172,6 +172,18 @@ def set_chatter_sided_for_all(conn, cr):
     conn.commit()
 
 
+def re_do_rename_for_unit_uom(conn, cr):
+    """Rename UoM "Unit" to "PCE" as it was in v11.
+    Reference ticket: #22238.
+    """
+    cr.execute("""
+        UPDATE uom_uom
+        SET name = 'PCE'
+        WHERE id = 1;
+    """)
+    conn.commit()
+
+
 def main():
     # Define our connection string
     if db_password:
@@ -202,6 +214,7 @@ def main():
     set_not_ported_modules_to_installed(conn, cr)
     partner_statement_config_settings(conn, cr)
     set_chatter_sided_for_all(conn, cr)
+    re_do_rename_for_unit_uom(conn, cr)
 
 
 if __name__ == "__main__":
