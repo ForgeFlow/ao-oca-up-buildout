@@ -184,6 +184,15 @@ def re_do_rename_for_unit_uom(conn, cr):
     conn.commit()
 
 
+def set_request_unit_to_hours(conn, cr):
+    """Change request unit from day default to hours."""
+    cr.execute("""
+        UPDATE hr_leave_type
+        SET request_unit = 'hour';
+    """)
+    conn.commit()
+
+
 def main():
     # Define our connection string
     if db_password:
@@ -215,6 +224,7 @@ def main():
     partner_statement_config_settings(conn, cr)
     set_chatter_sided_for_all(conn, cr)
     re_do_rename_for_unit_uom(conn, cr)
+    set_request_unit_to_hours(conn, cr)
 
 
 if __name__ == "__main__":
