@@ -62,7 +62,7 @@ beautifulsoup4==4.6.3
 bkcharts==0.2
 bokeh==1.1.0
 gdata==2.0.18
-numpy==1.15.4
+numpy==1.22.0
 olefile==0.46
 pandas==0.23.4
 pbr==5.1.1
